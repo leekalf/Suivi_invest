@@ -79,7 +79,7 @@ app.add_middleware(
         "https://suivi-invest.onrender.com", # Ajoutez votre URL exacte ici
     ],
     # Regex pour autoriser localhost ou 127.0.0.1 suivi de n'importe quel port
-    allow_origin_regex="https?://.*\.onrender\.com",
+    allow_origin_regex=r"https?://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
