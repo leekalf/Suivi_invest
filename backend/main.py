@@ -24,19 +24,21 @@ def init_db():
     """
     Fonction d'initialisation pour créer un Admin par défaut si la base est vide.
     """
-    db = SessionLocal()
     try:
-        admin_email = "admin@acp.tg"
-        
         # Création des tables avec gestion d'erreur pour le réseau Render
         try:
+            # On vérifie la connexion ici
+            engine.connect()
             models.Base.metadata.create_all(bind=engine)
             print("--- DATABASE : Tables créées ou déjà existantes ---")
         except Exception as e:
             print(f"--- DATABASE ERROR : Erreur de connexion initiale : {e} ---")
             # On ne lève pas l'exception ici pour laisser FastAPI démarrer 
             # et retenter la connexion lors des requêtes.
+            return
 
+        db = SessionLocal()
+        admin_email = "admin@acp.tg"
         # Vérifier si l'admin existe déjà
         existing_admin = db.query(models.User).filter(models.User.email == admin_email).first()
         
@@ -55,8 +57,9 @@ def init_db():
             print("--- INITIALISATION : Admin créé avec succès ---")
         else:
             print("--- INITIALISATION : L'admin existe déjà ---")
-    finally:
         db.close()
+    except Exception as e:
+        print(f"--- INITIALISATION ERROR : {e} ---")
 
 @app.on_event("startup")
 def startup_event():
