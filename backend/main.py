@@ -73,10 +73,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://localhost:3000", 
+        "http://127.0.0.1:3000", 
         "https://acp-invest-frontend.onrender.com",
         "https://acp-invest-client.onrender.com"
-        "https://acp-invest-frontend.onrender.com" # Remplacez par votre future URL Render
     ],
     # Regex pour autoriser localhost ou 127.0.0.1 suivi de n'importe quel port
     allow_origin_regex="https?://(localhost|127\.0\.0\.1)(:\d+)?",
