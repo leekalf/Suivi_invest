@@ -101,6 +101,7 @@ function LoginDialog({ open, onClose, onLogin }) {
 
   const handleSubmit = async () => {
     setError('');
+    console.log("Tentative de connexion à :", `${API_URL}/token`);
     try {
       // Le backend attend un format form-urlencoded pour OAuth2
       const formData = new URLSearchParams();
