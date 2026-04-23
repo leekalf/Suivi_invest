@@ -20,9 +20,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Création des tables dans la base de données (pour le développement)
-models.Base.metadata.create_all(bind=engine)
-
 def init_db():
     """
     Fonction d'initialisation pour créer un Admin par défaut si la base est vide.
@@ -30,6 +27,16 @@ def init_db():
     db = SessionLocal()
     try:
         admin_email = "admin@acp.tg"
+        
+        # Création des tables avec gestion d'erreur pour le réseau Render
+        try:
+            models.Base.metadata.create_all(bind=engine)
+            print("--- DATABASE : Tables créées ou déjà existantes ---")
+        except Exception as e:
+            print(f"--- DATABASE ERROR : Erreur de connexion initiale : {e} ---")
+            # On ne lève pas l'exception ici pour laisser FastAPI démarrer 
+            # et retenter la connexion lors des requêtes.
+
         # Vérifier si l'admin existe déjà
         existing_admin = db.query(models.User).filter(models.User.email == admin_email).first()
         
@@ -61,7 +68,13 @@ def startup_event():
 # Cela autorise http://localhost et http://127.0.0.1 sur N'IMPORTE QUEL PORT.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost", "http://127.0.0.1"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3000", 
+        "https://acp-invest-frontend.onrender.com",
+        "https://acp-invest-client.onrender.com"
+        "https://acp-invest-frontend.onrender.com" # Remplacez par votre future URL Render
+    ],
     # Regex pour autoriser localhost ou 127.0.0.1 suivi de n'importe quel port
     allow_origin_regex="https?://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
